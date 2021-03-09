@@ -1,0 +1,12 @@
+sistema gerenciador financeiro desenvolvido em angular 7
+
+- incluindo organização de projetos 
+- implementação de CRUD
+
+depencias instaladas
+
+-bootstrap
+- jquery
+- primeNg
+- chartJs
+- toastr
