@@ -3,8 +3,6 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { map, catchError }  from 'rxjs/operators';
 import { Categoria } from './categoria.model';
-import { element } from 'protractor';
-
 @Injectable({
   providedIn: 'root'
 })
@@ -29,7 +27,13 @@ export class CategoriaService {
       map(this.jsonDataCategoria)
     )
   }
-
+  // criação de uma categoria
+  create(categoria: Categoria): Observable<Categoria>{
+    return this.http.post(this.apiPath, categoria)
+      .pipe(catchError(this.handleError),
+      map(this.jsonDataCategoria)
+    )
+  }
   // atualização de categoria
   update(categoria: Categoria): Observable<Categoria> {
     const url = `${this.apiPath}/${categoria.id}`;
@@ -39,7 +43,6 @@ export class CategoriaService {
       map(() => categoria)
     )
   }
-
   // excluindo uma categoria
   delete(id: number): Observable<any> {
     const url = `${this.apiPath}/${id}`;
@@ -47,14 +50,6 @@ export class CategoriaService {
     return this.http.delete(url)
       .pipe(catchError(this.handleError),
       map(() => null)
-  )
-  }
-
-  // criação de uma categoria
-  create(categoria: Categoria): Observable<Categoria>{
-    return this.http.post(this.apiPath, categoria)
-      .pipe(catchError(this.handleError),
-      map(this.jsonDataCategoria)
     )
   }
 
