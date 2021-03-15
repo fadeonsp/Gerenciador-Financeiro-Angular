@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { map, catchError }  from 'rxjs/operators';
 import { Entry } from './entry.model';
@@ -55,14 +55,18 @@ export class EntryService {
   }
 
   // metodos privados
-  private jsonDataEntries(jsonData: any[]): Entry[]{
+  private jsonDataEntries(jsonData: any[]): Entry[] {
+
     const entries: Entry[] = [];
-    jsonData.forEach(element => entries.push(element as Entry));
-    return entries;
+
+    jsonData.forEach(element => {
+      const entry = Object.assign(new Entry(),element);
+      entries.push(entry);
+    });
   }
 
   private jsonDataEntry(jsonData: any): Entry{
-    return jsonData as Entry;
+    return Object.assign(new Entry(), jsonData);
   }
 
   private handleError(error: any): Observable<any>{

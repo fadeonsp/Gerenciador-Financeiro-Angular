@@ -1,4 +1,3 @@
-
 import { Categoria } from '../../categorias/shared/categoria.model';
 export class Entry {
 
@@ -19,7 +18,7 @@ export class Entry {
     revenue: 'Receita'
   };
 
-  getTextoPago(): string {
+  get textoPago(): string {
     return this.pago ? 'pago' : 'pendente';
 
   }
