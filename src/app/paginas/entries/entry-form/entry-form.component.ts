@@ -7,6 +7,8 @@ import toastr from 'toastr';
 
 import { Entry } from '../shared-entries/entry.model';
 import { EntryService } from '../shared-entries/entry.service';
+import { Categoria } from '../../categorias/shared/categoria.model';
+import { CategoriaService } from '../../categorias/shared/categoria.service';
 
 @Component({
   selector: 'app-entries-forms',
@@ -22,18 +24,44 @@ export class EntrysFormsComponent implements OnInit, AfterContentChecked {
   serverErrorMessages: string[] = null;
   submittingForm: boolean = false;
   entry: Entry = new Entry();
+  categorias: Array<Categoria>;
+
+  imaskConfig = {
+    mask: Number,
+    scale: 2,
+    thousandsSeparator: '',
+    padFractionalZeros: true,
+    normalizeZeros: true,
+    radix: ','
+  };
+
+  ptBR = {
+    firstDayOfWeek: 0,
+    dayNames: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'],
+    dayNamesShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'],
+    dayNamesMin: ['Do', 'Se', 'Te', 'Qu', 'Qu', 'Se', 'Sa'],
+    monthNames: [
+      'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho',
+      'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+    ],
+    monthNamesShort: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+    today: 'Hoje',
+    clear: 'Limpar'
+  }
 
   constructor(
     private entryService: EntryService,
     private route: ActivatedRoute,
     private router: Router,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private categoriaService: CategoriaService
     ) { }
 
   ngOnInit() {
     this.setCurrencyAction();
     this.buildEntryForm();
     this.loadEntry();
+    this.loadCategorias();
   }
 
   ngAfterContentChecked(){
@@ -49,6 +77,19 @@ export class EntrysFormsComponent implements OnInit, AfterContentChecked {
       this.updateEntry();
   }
 
+  get typeOptions(): Array<any>{
+    return Object.entries(Entry.types)
+      .map(([value, text]) => {
+        return {
+          text: text,
+          value: value
+        }
+
+      });
+  }
+
+  // métodos privados
+
   private setCurrencyAction(){
     if(this.route.snapshot.url[0].path == "new")
     this.currencyAction = "new"
@@ -60,10 +101,10 @@ export class EntrysFormsComponent implements OnInit, AfterContentChecked {
       id: [null],
       nome: [null, [Validators.required, Validators.minLength(2)]],
       descricao: [null],
-      tipo: [null, [Validators.required]],
+      tipo: ['expense', [Validators.required]],
       quantidade: [null, [Validators.required]],
       data: [null, [Validators.required]],
-      pago: [null, [Validators.required]],
+      pago: [true, [Validators.required]],
       categoriaId: [null, [Validators.required]],
     });
   }
@@ -82,6 +123,11 @@ export class EntrysFormsComponent implements OnInit, AfterContentChecked {
         (error) => alert("erro no servidor, tente novamente")
       )
     }
+  }
+
+  private loadCategorias(){
+    this.categoriaService.getAll()
+      .subscribe(categorias => this.categorias = categorias);
   }
 
   private setTituloPagina() {

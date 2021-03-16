@@ -7,12 +7,12 @@
 </nav>
 
 <div class="row mb-4">
-  <div class="col-md">
+  <div class="col-md-9">
     <h1 class="h2 border-left pl-2">
       {{tituloPagina}}
     </h1>
   </div>
-  <div class="col-md">
+  <div class="col-md-3">
     <a routerLink="/entries" class="btn btn-light float-right">
       << Voltar
     </a>
@@ -27,22 +27,109 @@
     </div>
 
     <div class="card-body">
-      <div class="form-row">
-        <div class="form-group col-md-4">
-          <label for="name">Nome</label>
-          <input type="text" class="form-control" id="name" formControlName="nome">
 
-          <!----em caso de arro-->
-          <div class="text-danger"
-              *ngIf="entryForm.get('nome').invalid
+      <div class="form-row">
+        <!----tipo-->
+        <div class="form-group col-md-2">
+          <label for="tipo">Tipo</label>
+          <select name="tipo" id="tipo" formControlName="tipo" class="form-control">
+            <option *ngFor="let option of typeOptions" [value]="option.value">{{option.text}}</option>
+            <option value="revenue">Receita</option>
+          </select>
+
+          <!----em caso de erro-->
+          <div class="text-danger" *ngIf="entryForm.get('tipo').invalid
+              && entryForm.get('tipo').touched">
+            <div *ngIf="entryForm.get('tipo').errors.required">dado obrigatório</div>
+          </div>
+        </div>
+         <!----nome---->
+         <div class="form-group col-md-5">
+          <label for="name">Lançamento</label>
+          <input type="text" class="form-control" id="name" formControlName="nome">
+          <!----em caso de erro-->
+          <div class="text-danger" *ngIf="entryForm.get('nome').invalid
               && entryForm.get('nome').invalid && entryForm.get('nome').touched">
               <div *ngIf="entryForm.get('nome').errors.required">dado obrigatório</div>
               <div *ngIf="entryForm.get('nome').errors.minlength">dave ter no minimo 2 caracteres</div>
           </div>
-
         </div>
 
-        <div class="form-group col-md-8">
+        <!----quantidade---->
+        <div class="form-group col-md-3">
+          <label for="quantidade">Valor</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <div class="input-group-text">R$</div>
+            </div>
+            <input [imask]="imaskConfig" type="text" class="form-control text-right" id="quantidade" formControlName="quantidade">
+          </div>
+          <!----em caso de erro-->
+          <div class="text-danger" *ngIf="entryForm.get('quantidade').invalid
+              && entryForm.get('quantidade').touched">
+            <div *ngIf="entryForm.get('quantidade').errors.required">dado obrigatório</div>
+          </div>
+        </div>
+
+        <!----data---->
+        <div class="form-group col-md-2">
+          <label for="data">Data</label>
+          <p-calendar id="data"
+            formControlName="data"
+            inputStyleClass="form-control"
+            dataType="string"
+            dateFormat="dd/mm/yy"
+            [locale]="ptBR"
+            [showButtonBar]="true"
+            >
+
+          </p-calendar>
+          <!----em caso de erro-->
+          <div class="text-danger" *ngIf="entryForm.get('data').invalid
+              && entryForm.get('data').touched">
+            <div *ngIf="entryForm.get('data').errors.required">dado obrigatório</div>
+          </div>
+        </div>
+
+
+      </div>
+
+      <div class="form-row">
+        <!----pago---->
+        <div class="form-group col-md-2">
+          <label for="pago">Pago</label>
+          <div class="btn-group">
+            <label (click)="entryForm.get('pago').setValue(true)" [class.active]="entryForm.get('pago').value == true" class="btn btn-outline-info">
+              Pago
+            </label>
+            <label (click)="entryForm.get('pago').setValue(false)" [class.active]="entryForm.get('pago').value == false" class="btn btn-outline-info">
+              Pendente
+            </label>
+          </div>
+          <!----em caso de erro-->
+          <div class="text-danger" *ngIf="entryForm.get('pago').invalid
+              && entryForm.get('pago').touched">
+            <div *ngIf="entryForm.get('pago').errors.required">dado obrigatório</div>
+          </div>
+        </div>
+
+         <!----categoriaId-->
+         <div class="form-group col-md-3">
+          <label for="tipo">categoria</label>
+          <select name="categoriaId" id="categoriaId" formControlName="categoriaId" class="form-control">
+            <option *ngFor="let categoria of categorias" [value]="categoria.id">{{categoria.nome}}</option>
+
+          </select>
+
+          <!----em caso de erro-->
+          <div class="text-danger" *ngIf="entryForm.get('categoriaId').invalid
+              && entryForm.get('categoriaId').touched">
+            <div *ngIf="entryForm.get('categoriaId').errors.required">dado obrigatório</div>
+          </div>
+        </div>
+
+        <!----descrição---->
+        <div class="form-group col-md-7">
           <label for="description">Descrição</label>
           <input type="text" class="form-control" id="description" formControlName="descricao">
         </div>
@@ -64,3 +151,7 @@
     Salvar
   </button>
 </form>
+
+<pre>
+  {{entryForm.value | json}}
+</pre>
